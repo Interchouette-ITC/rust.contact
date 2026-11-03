@@ -56,7 +56,7 @@ fn page_metadata(page: &str) -> (&'static str, &'static str) {
     match page {
         "serenade" => (
             "Serenade - Rust framework by ITC",
-            "Serenade is a Symfony-oriented application framework for Rust.",
+            "Serenade is a modular application framework for Rust.",
         ),
         "rustashop" => (
             "rustashop - ITC Rust project",
@@ -64,7 +64,7 @@ fn page_metadata(page: &str) -> (&'static str, &'static str) {
         ),
         "rangular" => (
             "rangular - ITC Rust project",
-            "Explore rangular, Angular-shaped templates for Leptos.",
+            "Explore rangular, Angular-shaped Leptos templates with automated component and SCSS builds.",
         ),
         "opentrading" => (
             "OpenTrading - ITC Rust project",

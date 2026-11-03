@@ -1,0 +1,53 @@
+<section
+  class="project-hero"
+  [class.project-hero--serenade]="isSerenade"
+  [class.project-hero--rustashop]="isRustashop"
+  [class.project-hero--rangular]="isRangular"
+  [class.project-hero--interfire]="isInterfire"
+  [class.project-hero--opentrading]="isOpenTrading"
+  [class.project-hero--itcy]="isItcy"
+>
+  <div class="wrap project-hero__inner">
+    <div class="project-hero__eyebrow-row">
+      <p class="eyebrow"><span class="eyebrow__dot"></span>{{ category }}</p>
+      @if (wip) {
+        <span class="project-hero__wip" title="Work in progress">
+          <span class="project-hero__wip-dot" aria-hidden="true"></span>
+          Work in progress
+        </span>
+      }
+    </div>
+    <img class="project-hero__brand" [src]="logo" [alt]="logoAlt" />
+    <p class="project-hero__name">{{ name }}</p>
+    <h1>{{ headline }}</h1>
+    <p class="hero__lead">{{ description }}</p>
+    <div class="hero__actions">
+      <a class="button button--primary" [href]="href">{{ linkLabel }}<span>↗</span></a>
+      <a class="button button--quiet" [href]="repository">{{ repositoryLabel }}</a>
+    </div>
+    <a class="back-link" href="/">← Back to all projects</a>
+  </div>
+</section>
+<section class="project-features wrap">
+  <p class="eyebrow">KEY FEATURES</p>
+  <h2>What{{ space }}{{ name }}{{ space }}does.</h2>
+  <div class="feature-grid">
+    @for (feature of features; track feature) {
+      <div class="feature-card"><p>{{ feature }}</p></div>
+    }
+  </div>
+</section>
+<section class="project-architecture wrap">
+  <p class="eyebrow">ARCHITECTURE</p>
+  <h2>How it works.</h2>
+  <p class="architecture-prose">{{ architecture }}</p>
+</section>
+<section class="project-tech-stack wrap">
+  <p class="eyebrow">TECHNOLOGY STACK</p>
+  <h2>Built with.</h2>
+  <div class="tech-tags">
+    @for (technology of techStack; track technology) {
+      <span class="tech-tag">{{ technology }}</span>
+    }
+  </div>
+</section>

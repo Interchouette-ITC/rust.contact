@@ -62,13 +62,6 @@ a {
   text-decoration: none;
 }
 
-.brand-group {
-  display: inline-flex;
-  min-width: 0;
-  flex: 0 1 auto;
-  align-items: center;
-  gap: 0.85rem;
-}
 
 .brand-contact {
   display: grid;
@@ -211,6 +204,13 @@ a {
   border-radius: 28px;
   background: linear-gradient(145deg, #f8f6f3, #dfd9d3);
   box-shadow: 0 18px 60px rgb(169 93 53 / 20%), 0 0 34px rgb(169 93 53 / 12%);
+  text-decoration: none;
+}
+
+.hero__rust-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
@@ -253,6 +253,11 @@ a {
 
 .hero__rust-title {
   color: var(--purple);
+  text-decoration: none;
+}
+
+.hero__rust-title:hover {
+  text-decoration: underline;
 }
 
 .hero__lead {
@@ -614,6 +619,52 @@ a {
   box-shadow: 0 0 14px rgb(211 69 22 / 60%);
 }
 
+.project-hero--interfire {
+  --project-accent: #ffc81e;
+  background-image: radial-gradient(ellipse at 70% 0%, rgb(255 200 30 / 14%), transparent 45rem);
+}
+
+.project-hero--interfire .eyebrow {
+  color: #ffc81e;
+}
+
+.project-hero--interfire .eyebrow__dot {
+  background: #ffc81e;
+  box-shadow: 0 0 14px rgb(255 200 30 / 65%);
+}
+
+.project-hero--interfire .button--primary {
+  background: #ffc81e;
+  color: #17140b;
+}
+
+.project-hero--interfire .button--primary:hover {
+  background: #ffda57;
+}
+
+.project-hero--opentrading {
+  --project-accent: #5bc0a4;
+  background-image: radial-gradient(ellipse at 70% 0%, rgb(91 192 164 / 14%), transparent 45rem);
+}
+
+.project-hero--opentrading .eyebrow {
+  color: #5bc0a4;
+}
+
+.project-hero--opentrading .eyebrow__dot {
+  background: #5bc0a4;
+  box-shadow: 0 0 14px rgb(91 192 164 / 65%);
+}
+
+.project-hero--opentrading .button--primary {
+  background: #5bc0a4;
+  color: #101010;
+}
+
+.project-hero--opentrading .button--primary:hover {
+  background: #78c9c0;
+}
+
 .project-card--rangular {
   --project-accent: #d34516;
 }
@@ -873,12 +924,48 @@ a {
   display: grid;
   justify-items: start;
   padding-block: 100px 75px;
+  position: relative;
 }
 
 .project-hero__name {
   margin: 0 0 0.7rem;
   color: #bac8c2;
   font-size: 0.9rem;
+}
+
+.project-hero__eyebrow-row {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+  gap: 0.9rem 1rem;
+}
+
+.project-hero__eyebrow-row .eyebrow {
+  margin: 0;
+}
+
+.project-hero__wip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.24rem 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--project-accent, #b6a8ed) 45%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--project-accent, #b6a8ed) 10%, transparent);
+  color: var(--project-accent, #b6a8ed);
+  font: 600 0.62rem ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.08em;
+}
+
+.project-hero__wip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 7px currentColor;
 }
 
 .project-hero__brand {
@@ -923,6 +1010,131 @@ a {
 
 .back-link:hover {
   color: #fff;
+}
+
+/* ── Project content sections ── */
+
+.project-features {
+  padding-block: 80px 60px;
+}
+
+.project-architecture,
+.project-tech-stack {
+  padding-block: 40px 60px;
+}
+
+.project-features h2,
+.project-architecture h2,
+.project-tech-stack h2 {
+  max-width: 600px;
+  margin: 0 0 2.5rem;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 590;
+  letter-spacing: -0.06em;
+  line-height: 1.1;
+}
+
+/* Feature grid */
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+}
+
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.4rem;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--project-accent, #b6a8ed);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 1%);
+}
+
+.feature-card h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.feature-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.65;
+}
+
+/* Architecture prose */
+
+.architecture-prose {
+  max-width: 750px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.8;
+}
+
+/* Tech stack tags */
+
+.tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tech-tag {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 2%);
+  color: #a9adbb;
+  font-size: 0.78rem;
+  font-weight: 550;
+  letter-spacing: 0.01em;
+}
+
+/* Per-project accent colors for feature cards */
+
+.site-shell--serenade .feature-card {
+  --project-accent: #e2bd5b;
+}
+
+.site-shell--rustashop .feature-card {
+  --project-accent: #dea584;
+}
+
+.site-shell--rangular .feature-card {
+  --project-accent: #d34516;
+}
+
+.site-shell--opentrading .feature-card {
+  --project-accent: #5bc0a4;
+}
+
+.site-shell--interfire .feature-card {
+  --project-accent: #ffc81e;
+}
+
+.site-shell--itcy .feature-card {
+  --project-accent: #b6a8ed;
+}
+
+/* Responsive: single column on small screens */
+
+@media (max-width: 760px) {
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-features,
+  .project-architecture,
+  .project-tech-stack {
+    padding-block: 50px 40px;
+  }
 }
 
 .site-shell--serenade {
@@ -1029,6 +1241,17 @@ a {
   line-height: 1.7;
 }
 
+.footer-tech a {
+  color: #c5d0cb;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.footer-tech a:hover,
+.footer-tech a:focus-visible {
+  color: #d3c4ff;
+}
+
 .footer-project-links {
   display: flex;
   flex-wrap: wrap;
@@ -1089,7 +1312,7 @@ a {
     gap: 0.75rem;
   }
 
-  .brand-contact {
+  .site-header .brand-contact {
     display: none;
   }
 
@@ -1261,4 +1484,174 @@ a {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
   }
+
+}
+
+/* Keep each portfolio tile and its project page on the same accent. */
+.project-card--serenade,
+.project-hero--serenade {
+  --project-accent: #e2bd5b;
+}
+
+.project-card--rustashop,
+.project-hero--rustashop {
+  --project-accent: #dea584;
+}
+
+.project-card--rangular,
+.project-hero--rangular {
+  --project-accent: #d34516;
+}
+
+.project-card--interfire,
+.project-hero--interfire {
+  --project-accent: #ffc81e;
+}
+
+.project-card--opentrading,
+.project-hero--opentrading {
+  --project-accent: #78c9c0;
+}
+
+.project-card--itcy,
+.project-hero--itcy {
+  --project-accent: #c3a0f4;
+}
+
+.project-card .project-card__tag,
+.project-card .project-card__link,
+.project-hero .eyebrow {
+  color: var(--project-accent);
+}
+
+.project-hero .eyebrow__dot {
+  background: var(--project-accent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--project-accent) 65%, transparent);
+}
+
+.project-hero .project-hero__wip {
+  border-color: color-mix(in srgb, var(--project-accent) 45%, transparent);
+  background: color-mix(in srgb, var(--project-accent) 10%, transparent);
+  color: var(--project-accent);
+}
+
+.project-hero .button--primary {
+  border-color: var(--project-accent);
+  background: var(--project-accent);
+  color: #101010;
+}
+
+.project-hero .button--primary:hover {
+  background: color-mix(in srgb, var(--project-accent) 82%, white);
+}
+
+.project-hero {
+  background-image: radial-gradient(
+    ellipse at 70% 0%,
+    color-mix(in srgb, var(--project-accent) 14%, transparent),
+    transparent 45rem
+  );
+}
+
+.project-card:hover {
+  background: color-mix(in srgb, var(--project-accent) 5%, transparent);
+}
+
+.site-shell--serenade .feature-card,
+.site-shell--serenade .brand__mark,
+.site-shell--serenade .header-cta,
+.site-shell--serenade .header-github-icon {
+  --project-accent: #e2bd5b;
+  --brand-glow: rgb(226 189 91 / 65%);
+}
+
+.site-shell--rustashop .feature-card,
+.site-shell--rustashop .brand__mark,
+.site-shell--rustashop .header-cta,
+.site-shell--rustashop .header-github-icon {
+  --project-accent: #dea584;
+  --brand-glow: rgb(222 165 132 / 60%);
+}
+
+.site-shell--rangular .feature-card,
+.site-shell--rangular .brand__mark,
+.site-shell--rangular .header-cta,
+.site-shell--rangular .header-github-icon {
+  --project-accent: #d34516;
+  --brand-glow: rgb(211 69 22 / 60%);
+}
+
+.site-shell--interfire .feature-card,
+.site-shell--interfire .brand__mark,
+.site-shell--interfire .header-cta,
+.site-shell--interfire .header-github-icon {
+  --project-accent: #ffc81e;
+  --brand-glow: rgb(255 200 30 / 65%);
+}
+
+.site-shell--opentrading .feature-card,
+.site-shell--opentrading .brand__mark,
+.site-shell--opentrading .header-cta,
+.site-shell--opentrading .header-github-icon {
+  --project-accent: #78c9c0;
+  --brand-glow: rgb(120 201 192 / 65%);
+}
+
+.site-shell--itcy .feature-card,
+.site-shell--itcy .brand__mark,
+.site-shell--itcy .header-cta,
+.site-shell--itcy .header-github-icon {
+  --project-accent: #c3a0f4;
+  --brand-glow: rgb(195 160 244 / 65%);
+}
+
+.site-shell--serenade,
+.site-shell--serenade .project-hero {
+  --project-accent: #e2bd5b;
+}
+
+.site-shell--rustashop,
+.site-shell--rustashop .project-hero {
+  --project-accent: #dea584;
+}
+
+.site-shell--rangular,
+.site-shell--rangular .project-hero {
+  --project-accent: #d34516;
+}
+
+.site-shell--interfire,
+.site-shell--interfire .project-hero {
+  --project-accent: #ffc81e;
+}
+
+.site-shell--opentrading,
+.site-shell--opentrading .project-hero {
+  --project-accent: #78c9c0;
+}
+
+.site-shell--itcy,
+.site-shell--itcy .project-hero {
+  --project-accent: #c3a0f4;
+}
+
+.site-shell--serenade .project-features > .eyebrow,
+.site-shell--serenade .project-architecture > .eyebrow,
+.site-shell--serenade .project-tech-stack > .eyebrow,
+.site-shell--rustashop .project-features > .eyebrow,
+.site-shell--rustashop .project-architecture > .eyebrow,
+.site-shell--rustashop .project-tech-stack > .eyebrow,
+.site-shell--rangular .project-features > .eyebrow,
+.site-shell--rangular .project-architecture > .eyebrow,
+.site-shell--rangular .project-tech-stack > .eyebrow,
+.site-shell--interfire .project-features > .eyebrow,
+.site-shell--interfire .project-architecture > .eyebrow,
+.site-shell--interfire .project-tech-stack > .eyebrow,
+.site-shell--opentrading .project-features > .eyebrow,
+.site-shell--opentrading .project-architecture > .eyebrow,
+.site-shell--opentrading .project-tech-stack > .eyebrow,
+.site-shell--itcy .project-features > .eyebrow,
+.site-shell--itcy .project-architecture > .eyebrow,
+.site-shell--itcy .project-tech-stack > .eyebrow {
+  color: var(--project-accent);
 }

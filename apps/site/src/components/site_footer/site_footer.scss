@@ -1,0 +1,78 @@
+.site-footer {
+  /* Footer layout is global; social links are styled by this component. */
+}
+
+.footer-social-links {
+  gap: 0.7rem;
+}
+
+.footer-social-link {
+  --social-color: #c5d0cb;
+  display: grid;
+  width: 2.65rem;
+  height: 2.65rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--social-color) 42%, transparent);
+  border-radius: 50%;
+  color: var(--social-color);
+  transition: border-color 180ms ease, color 180ms ease, transform 900ms ease;
+}
+
+.footer-social-link:hover,
+.footer-social-link:focus-visible {
+  border-color: var(--social-color);
+  color: var(--social-color);
+  transform: rotate(360deg);
+}
+
+.footer-social-link--github:hover,
+.footer-social-link--github:focus-visible {
+  --social-color: #c5a5ff;
+}
+
+.footer-social-link--x:hover,
+.footer-social-link--x:focus-visible {
+  --social-color: #f3f2f7;
+}
+
+.footer-social-link--linkedin:hover,
+.footer-social-link--linkedin:focus-visible {
+  --social-color: #0a66c2;
+}
+
+.footer-social-glyph {
+  display: grid;
+  width: 1.55rem;
+  height: 1.55rem;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.footer-social-icon {
+  display: block;
+  width: 0.9rem;
+  height: 0.9rem;
+  background-color: currentColor;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+}
+
+.footer-social-link--github .footer-social-icon {
+  mask-image: url("/social-github.svg");
+}
+
+.footer-social-link--x .footer-social-icon {
+  mask-image: url("/social-x.svg");
+}
+
+.footer-social-link--linkedin .footer-social-icon {
+  mask-image: url("/social-linkedin.svg");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-social-link:hover,
+  .footer-social-link:focus-visible {
+    transform: none;
+  }
+}
