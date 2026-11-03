@@ -1,0 +1,29 @@
+.site-nav {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem 1.35rem;
+  min-width: 0;
+
+  a {
+    color: #aab8b6;
+    font-size: 0.84rem;
+    text-decoration: none;
+    transition: color 160ms ease;
+  }
+
+  a:hover,
+  a:focus-visible {
+    color: #effbf5;
+  }
+
+  @media (max-width: 760px) {
+    gap: 0.2rem 0.72rem;
+
+    a {
+      font-size: 0.7rem;
+    }
+  }
+}
