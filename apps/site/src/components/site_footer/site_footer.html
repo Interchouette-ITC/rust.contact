@@ -1,6 +1,6 @@
 <footer class="site-footer">
   <div class="footer-left">
-    <a class="brand brand--footer" href="/">
+    <a class="brand brand--footer" [attr.href]="homeUrl">
       <span class="brand__mark" aria-hidden="true"
         ><span class="brand__crab">🦀</span></span
       >
@@ -11,12 +11,12 @@
       <a href="https://interchouette.net/">Interchouette</a>.
     </p>
     <nav class="footer-project-links" aria-label="Projects">
-      <a href="/serenade/">Serenade</a>
-      <a href="/rangular/">rangular</a>
-      <a href="/rustashop/">rustashop</a>
-      <a href="/opentrading/">OpenTrading</a>
-      <a href="/interfire/">InterFire</a>
-      <a href="/itcy/">ITCy</a>
+      <a [attr.href]="serenadeUrl">Serenade</a>
+      <a [attr.href]="rangularUrl">rangular</a>
+      <a [attr.href]="rustashopUrl">rustashop</a>
+      <a [attr.href]="openTradingUrl">OpenTrading</a>
+      <a [attr.href]="interfireUrl">InterFire</a>
+      <a [attr.href]="itcyUrl">ITCy</a>
     </nav>
     <small class="footer-tech">
       Built with{{ space }}
@@ -34,7 +34,7 @@
   </div>
   <div class="footer-right">
     <p>Have a project in mind?</p>
-    <a class="footer-contact-link" href="/#contact">
+    <a class="footer-contact-link" [attr.href]="homeUrl + '#contact'">
       Tell us what you're building <span>↑</span>
     </a>
     <a class="brand-contact" href="mailto:hi@rust.contact">

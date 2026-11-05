@@ -1894,7 +1894,7 @@ dependencies = [
 [[package]]
 name = "rangular-aot"
 version = "1.0.3"
-source = "git+https://github.com/Interchouette-ITC/rangular.git?branch=dev#0bb319d9dd3b5b32359b411586145f3304704228"
+source = "git+https://github.com/Interchouette-ITC/rangular.git?branch=dev#6d342fbf6a60a5315ab88adda75cb363edad593c"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1907,7 +1907,7 @@ dependencies = [
 [[package]]
 name = "rangular-build"
 version = "1.0.3"
-source = "git+https://github.com/Interchouette-ITC/rangular.git?branch=dev#0bb319d9dd3b5b32359b411586145f3304704228"
+source = "git+https://github.com/Interchouette-ITC/rangular.git?branch=dev#6d342fbf6a60a5315ab88adda75cb363edad593c"
 dependencies = [
  "rangular-aot",
  "rangular-css",
@@ -1916,7 +1916,7 @@ dependencies = [
 [[package]]
 name = "rangular-css"
 version = "1.0.3"
-source = "git+https://github.com/Interchouette-ITC/rangular.git?branch=dev#0bb319d9dd3b5b32359b411586145f3304704228"
+source = "git+https://github.com/Interchouette-ITC/rangular.git?branch=dev#6d342fbf6a60a5315ab88adda75cb363edad593c"
 dependencies = [
  "grass",
 ]
@@ -1924,7 +1924,7 @@ dependencies = [
 [[package]]
 name = "rangular-expr"
 version = "1.0.3"
-source = "git+https://github.com/Interchouette-ITC/rangular.git?branch=dev#0bb319d9dd3b5b32359b411586145f3304704228"
+source = "git+https://github.com/Interchouette-ITC/rangular.git?branch=dev#6d342fbf6a60a5315ab88adda75cb363edad593c"
 dependencies = [
  "rangular-host",
 ]
@@ -1932,7 +1932,7 @@ dependencies = [
 [[package]]
 name = "rangular-host"
 version = "1.0.3"
-source = "git+https://github.com/Interchouette-ITC/rangular.git?branch=dev#0bb319d9dd3b5b32359b411586145f3304704228"
+source = "git+https://github.com/Interchouette-ITC/rangular.git?branch=dev#6d342fbf6a60a5315ab88adda75cb363edad593c"
 dependencies = [
  "regex",
 ]
@@ -1940,7 +1940,7 @@ dependencies = [
 [[package]]
 name = "rangular-parser"
 version = "1.0.3"
-source = "git+https://github.com/Interchouette-ITC/rangular.git?branch=dev#0bb319d9dd3b5b32359b411586145f3304704228"
+source = "git+https://github.com/Interchouette-ITC/rangular.git?branch=dev#6d342fbf6a60a5315ab88adda75cb363edad593c"
 dependencies = [
  "rangular-expr",
 ]
