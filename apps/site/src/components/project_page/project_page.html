@@ -22,10 +22,10 @@
     <h1>{{ headline }}</h1>
     <p class="hero__lead">{{ description }}</p>
     <div class="hero__actions">
-      <a class="button button--primary" [href]="href">{{ linkLabel }}<span>↗</span></a>
-      <a class="button button--quiet" [href]="repository">{{ repositoryLabel }}</a>
+      <a class="button button--primary" [attr.href]="href">{{ linkLabel }}<span>↗</span></a>
+      <a class="button button--quiet" [attr.href]="repository">{{ repositoryLabel }}</a>
     </div>
-    <a class="back-link" href="/">← Back to all projects</a>
+    <a class="back-link" [attr.href]="homeUrl">← Back to all projects</a>
   </div>
 </section>
 <section class="project-features wrap">

@@ -97,6 +97,33 @@ mod tests {
     }
 
     #[test]
+    fn nav_links_use_base_url() {
+        // In test/dev mode SITE_BASE_URL is not set so we get localhost URLs.
+        // This test asserts the URL shape: links must be absolute and contain
+        // the base, never bare root-relative paths like /serenade/.
+        let base = crate::components::SITE_BASE_URL;
+        let html = render_page("home");
+        // Every project must appear as an absolute link, not a path.
+        for slug in ["serenade", "rustashop", "rangular", "interfire", "itcy"] {
+            let abs = format!("{base}/{slug}/");
+            assert!(
+                html.contains(&abs),
+                "nav link for {slug} must be absolute ({abs}); got relative or missing"
+            );
+        }
+        // opentrading maps to open-trading subdomain in production; in dev it's a path.
+        assert!(
+            html.contains(&format!("{base}/opentrading/")),
+            "nav link for opentrading must be absolute"
+        );
+        // Root-relative hrefs must not appear.
+        assert!(
+            !html.contains("href=\"/serenade/\""),
+            "bare /serenade/ path must not appear in rendered HTML"
+        );
+    }
+
+    #[test]
     fn subdomain_routes_resolve() {
         assert_eq!(page_for_path("/", "serenade.rust.contact"), "serenade");
         assert_eq!(page_for_path("/", "rustashop.rust.contact"), "rustashop");
