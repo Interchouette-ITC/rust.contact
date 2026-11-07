@@ -12,12 +12,47 @@ pub mod site_footer;
 pub mod site_header;
 pub mod site_layout;
 
+/// Base URL baked in at compile time. Override with SITE_BASE_URL env var.
+/// Production: `SITE_BASE_URL=https://rust.contact`
+/// Default (localhost dev): `http://localhost:4174` (Trunk default port)
+pub(crate) const SITE_BASE_URL: &str = match option_env!("SITE_BASE_URL") {
+    Some(url) => url,
+    None => "http://localhost:4174",
+};
+
+/// Returns the canonical URL for a project page or the home page.
+/// On production these become subdomain URLs; on localhost path-based URLs.
+pub(crate) fn project_url(slug: &str) -> String {
+    match SITE_BASE_URL {
+        // Production subdomain layout: each project gets its own subdomain.
+        "https://rust.contact" => match slug {
+            "home"        => "https://rust.contact/".to_owned(),
+            "opentrading" => "https://open-trading.rust.contact/".to_owned(),
+            other         => format!("https://{other}.rust.contact/"),
+        },
+        // Localhost and any other base: use path-based URLs under the base.
+        base => match slug {
+            "home" => format!("{base}/"),
+            other  => format!("{base}/{other}/"),
+        },
+    }
+}
+
 pub(crate) struct SiteHost;
 
 impl Host for SiteHost {
     fn get(&self, name: &str) -> Option<Value> {
         match name {
             "space" => Some(Value::from(" ")),
+            "brandCrab" => Some(Value::from("🦀")),
+            "siteName" => Some(Value::from("rust.contact")),
+            "homeUrl"       => Some(Value::Str(project_url("home"))),
+            "serenadeUrl"   => Some(Value::Str(project_url("serenade"))),
+            "rustashopUrl"  => Some(Value::Str(project_url("rustashop"))),
+            "rangularUrl"   => Some(Value::Str(project_url("rangular"))),
+            "openTradingUrl"=> Some(Value::Str(project_url("opentrading"))),
+            "interfireUrl"  => Some(Value::Str(project_url("interfire"))),
+            "itcyUrl"       => Some(Value::Str(project_url("itcy"))),
             "ferrisSaying" => {
                 let sayings = [
                     "I was told there'd be snacks.",

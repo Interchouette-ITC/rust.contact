@@ -10,12 +10,16 @@ use components::{
 #[cfg(feature = "hydrate")]
 #[component]
 pub fn App() -> impl IntoView {
-    let path = web_sys::window()
+    let location = web_sys::window()
         .expect("browser window is available during hydration")
-        .location()
+        .location();
+    let path = location
         .pathname()
         .expect("browser pathname is available during hydration");
-    view! { <SitePage page=page_for_path(&path) /> }
+    let hostname = location
+        .hostname()
+        .expect("browser hostname is available during hydration");
+    view! { <SitePage page=page_for_path(&path, &hostname) /> }
 }
 
 #[component]
@@ -47,7 +51,25 @@ pub fn render_page(page: &'static str) -> String {
 }
 
 #[cfg(any(feature = "hydrate", test))]
-fn page_for_path(path: &str) -> &'static str {
+fn page_for_path(path: &str, hostname: &str) -> &'static str {
+    // Subdomain routing: {project}.rust.contact maps directly to its project page.
+    // The subdomain is the label before the first dot; e.g. "serenade.rust.contact"
+    // → "serenade". open-trading.rust.contact → "opentrading".
+    let subdomain = hostname.split('.').next().unwrap_or("");
+    let from_subdomain = match subdomain {
+        "serenade" => Some("serenade"),
+        "rustashop" => Some("rustashop"),
+        "rangular" => Some("rangular"),
+        "open-trading" | "opentrading" => Some("opentrading"),
+        "interfire" => Some("interfire"),
+        "itcy" => Some("itcy"),
+        _ => None,
+    };
+    if let Some(page) = from_subdomain {
+        return page;
+    }
+
+    // Fallback: path-based routing for rust.contact/{project}/
     match path.trim_matches('/') {
         "serenade" => "serenade",
         "rustashop" => "rustashop",
@@ -65,13 +87,53 @@ mod tests {
 
     #[test]
     fn portfolio_routes_resolve() {
-        assert_eq!(page_for_path("/"), "home");
-        assert_eq!(page_for_path("/serenade/"), "serenade");
-        assert_eq!(page_for_path("/rustashop"), "rustashop");
-        assert_eq!(page_for_path("/rangular/"), "rangular");
-        assert_eq!(page_for_path("/opentrading/"), "opentrading");
-        assert_eq!(page_for_path("/interfire/"), "interfire");
-        assert_eq!(page_for_path("/itcy/"), "itcy");
+        assert_eq!(page_for_path("/", "rust.contact"), "home");
+        assert_eq!(page_for_path("/serenade/", "rust.contact"), "serenade");
+        assert_eq!(page_for_path("/rustashop", "rust.contact"), "rustashop");
+        assert_eq!(page_for_path("/rangular/", "rust.contact"), "rangular");
+        assert_eq!(page_for_path("/opentrading/", "rust.contact"), "opentrading");
+        assert_eq!(page_for_path("/interfire/", "rust.contact"), "interfire");
+        assert_eq!(page_for_path("/itcy/", "rust.contact"), "itcy");
+    }
+
+    #[test]
+    fn nav_links_use_base_url() {
+        // In test/dev mode SITE_BASE_URL is not set so we get localhost URLs.
+        // This test asserts the URL shape: links must be absolute and contain
+        // the base, never bare root-relative paths like /serenade/.
+        let base = crate::components::SITE_BASE_URL;
+        let html = render_page("home");
+        // Every project must appear as an absolute link, not a path.
+        for slug in ["serenade", "rustashop", "rangular", "interfire", "itcy"] {
+            let abs = format!("{base}/{slug}/");
+            assert!(
+                html.contains(&abs),
+                "nav link for {slug} must be absolute ({abs}); got relative or missing"
+            );
+        }
+        // opentrading maps to open-trading subdomain in production; in dev it's a path.
+        assert!(
+            html.contains(&format!("{base}/opentrading/")),
+            "nav link for opentrading must be absolute"
+        );
+        // Root-relative hrefs must not appear.
+        assert!(
+            !html.contains("href=\"/serenade/\""),
+            "bare /serenade/ path must not appear in rendered HTML"
+        );
+    }
+
+    #[test]
+    fn subdomain_routes_resolve() {
+        assert_eq!(page_for_path("/", "serenade.rust.contact"), "serenade");
+        assert_eq!(page_for_path("/", "rustashop.rust.contact"), "rustashop");
+        assert_eq!(page_for_path("/", "rangular.rust.contact"), "rangular");
+        assert_eq!(page_for_path("/", "open-trading.rust.contact"), "opentrading");
+        assert_eq!(page_for_path("/", "opentrading.rust.contact"), "opentrading");
+        assert_eq!(page_for_path("/", "interfire.rust.contact"), "interfire");
+        assert_eq!(page_for_path("/", "itcy.rust.contact"), "itcy");
+        // subdomain takes precedence over conflicting path
+        assert_eq!(page_for_path("/rustashop", "serenade.rust.contact"), "serenade");
     }
 
     #[test]

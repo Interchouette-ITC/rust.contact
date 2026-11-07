@@ -23,8 +23,13 @@ fn main() -> anyhow::Result<()> {
         if shell.matches(content_marker).count() != 1 {
             bail!("Trunk output must contain exactly one {content_marker} marker");
         }
+        let canonical_marker = "SERENADE_SSG_CANONICAL";
+        if shell.matches(canonical_marker).count() != 1 {
+            bail!("Trunk output must contain exactly one {canonical_marker} marker");
+        }
         let mut html = shell.replacen(content_marker, &rust_contact_site::render_page(page), 1);
-        let (title, description) = page_metadata(page);
+        let (title, description, canonical) = page_metadata(page);
+        html = html.replacen(canonical_marker, canonical, 1);
         html = html.replace(
             "<title>Rust.Contact - Independent Rust projects from ITC</title>",
             &format!("<title>{title}</title>"),
@@ -52,35 +57,42 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-fn page_metadata(page: &str) -> (&'static str, &'static str) {
+fn page_metadata(page: &str) -> (&'static str, &'static str, &'static str) {
     match page {
         "serenade" => (
             "Serenade - Rust framework by ITC",
             "Serenade is a modular application framework for Rust.",
+            "https://serenade.rust.contact/",
         ),
         "rustashop" => (
             "rustashop - ITC Rust project",
             "Explore rustashop, an independent Rust project from ITC.",
+            "https://rustashop.rust.contact/",
         ),
         "rangular" => (
             "rangular - ITC Rust project",
             "Explore rangular, Angular-shaped Leptos templates with automated component and SCSS builds.",
+            "https://rangular.rust.contact/",
         ),
         "opentrading" => (
             "OpenTrading - ITC Rust project",
             "Explore OpenTrading, a trading workstation built in Rust.",
+            "https://open-trading.rust.contact/",
         ),
         "interfire" => (
             "InterFire - ITC Rust project",
             "Explore InterFire, a Linux-first application firewall in Rust.",
+            "https://interfire.rust.contact/",
         ),
         "itcy" => (
             "ITCy - ITC Rust project",
             "Explore ITCy, an AI operator for Interchouette ITC.",
+            "https://itcy.rust.contact/",
         ),
         _ => (
             "Rust.Contact - Independent Rust projects from ITC",
             "Rust.Contact is the ITC portfolio for independent Rust products and open-source projects.",
+            "https://rust.contact/",
         ),
     }
 }
