@@ -3,8 +3,8 @@ use rangular_aot::HostCell;
 use rangular_host::{Host, HostError, Value};
 
 use super::{
-    interfire_project, itcy_project, opentrading_project, rangular_project, rustashop_project,
-    serenade_project, SiteHost,
+    SiteHost, interfire_project, itcy_project, opentrading_project, rangular_project,
+    rustashop_project, serenade_project,
 };
 
 include!(concat!(env!("OUT_DIR"), "/rangular/project_page_view.rs"));
@@ -83,7 +83,7 @@ impl Host for ProjectPageHost {
                     .map(|technology| Value::from(*technology))
                     .collect(),
             ),
-            _ => return SiteHost.get(name),
+            _ => return SiteHost::default().get(name),
         };
         Some(value)
     }

@@ -1,3 +1,4 @@
+use leptos::reactive::{signal::RwSignal, traits::Get};
 use rangular_host::{Host, HostError, Value};
 
 pub mod interfire_project;
@@ -26,19 +27,45 @@ pub(crate) fn project_url(slug: &str) -> String {
     match SITE_BASE_URL {
         // Production subdomain layout: each project gets its own subdomain.
         "https://rust.contact" => match slug {
-            "home"        => "https://rust.contact/".to_owned(),
+            "home" => "https://rust.contact/".to_owned(),
             "opentrading" => "https://open-trading.rust.contact/".to_owned(),
-            other         => format!("https://{other}.rust.contact/"),
+            other => format!("https://{other}.rust.contact/"),
         },
         // Localhost and any other base: use path-based URLs under the base.
         base => match slug {
             "home" => format!("{base}/"),
-            other  => format!("{base}/{other}/"),
+            other => format!("{base}/{other}/"),
         },
     }
 }
 
-pub(crate) struct SiteHost;
+#[derive(Default)]
+pub(crate) struct SiteHost {
+    pub ferris_saying: Option<RwSignal<String>>,
+}
+
+const FERRIS_SAYINGS: &[&str] = &[
+    "I was told there'd be snacks.",
+    "I work for crabsolutely nothing.",
+    "This hard hat is mostly for the vibes.",
+    "I came. I saw. I crabbed.",
+    "Rust? I thought you said snacks.",
+    "Safety first. Pinching second.",
+    "I debug with my claws.",
+    "If it compiles, I take the credit.",
+    "I am here to shell out advice.",
+    "Today's forecast: partly crabby.",
+    "I put the hard in hard hat.",
+    "Keep calm and crab on.",
+    "I know a shortcut. It is sideways.",
+    "No bugs, just tiny uninvited features.",
+    "I am the designated pinch hitter.",
+    "This meeting could have been a beach.",
+    "Trust me, I am a crustacean engineer.",
+    "I have got a shell of a work ethic.",
+    "One small pinch for Ferris.",
+    "I came for the code, stayed for the snacks.",
+];
 
 impl Host for SiteHost {
     fn get(&self, name: &str) -> Option<Value> {
@@ -46,45 +73,17 @@ impl Host for SiteHost {
             "space" => Some(Value::from(" ")),
             "brandCrab" => Some(Value::from("🦀")),
             "siteName" => Some(Value::from("rust.contact")),
-            "homeUrl"       => Some(Value::Str(project_url("home"))),
-            "serenadeUrl"   => Some(Value::Str(project_url("serenade"))),
-            "rustashopUrl"  => Some(Value::Str(project_url("rustashop"))),
-            "rangularUrl"   => Some(Value::Str(project_url("rangular"))),
-            "openTradingUrl"=> Some(Value::Str(project_url("opentrading"))),
-            "interfireUrl"  => Some(Value::Str(project_url("interfire"))),
-            "itcyUrl"       => Some(Value::Str(project_url("itcy"))),
-            "ferrisSaying" => {
-                let sayings = [
-                    "I was told there'd be snacks.",
-                    "I work for crabsolutely nothing.",
-                    "This hard hat is mostly for the vibes.",
-                    "I came. I saw. I crabbed.",
-                    "Rust? I thought you said snacks.",
-                    "Safety first. Pinching second.",
-                    "I debug with my claws.",
-                    "If it compiles, I take the credit.",
-                    "I am here to shell out advice.",
-                    "Today's forecast: partly crabby.",
-                    "I put the hard in hard hat.",
-                    "Keep calm and crab on.",
-                    "I know a shortcut. It is sideways.",
-                    "No bugs, just tiny uninvited features.",
-                    "I am the designated pinch hitter.",
-                    "This meeting could have been a beach.",
-                    "Trust me, I am a crustacean engineer.",
-                    "I have got a shell of a work ethic.",
-                    "One small pinch for Ferris.",
-                    "I came for the code, stayed for the snacks.",
-                ];
-
-                #[cfg(all(feature = "hydrate", not(feature = "ssr")))]
-                {
-                    let index = (js_sys::Math::random() * sayings.len() as f64) as usize;
-                    Some(Value::Str(format!("Ferris says: {}", sayings[index])))
-                }
-                #[cfg(not(all(feature = "hydrate", not(feature = "ssr"))))]
-                Some(Value::Str(format!("Ferris says: {}", sayings[0])))
-            }
+            "homeUrl" => Some(Value::Str(project_url("home"))),
+            "serenadeUrl" => Some(Value::Str(project_url("serenade"))),
+            "rustashopUrl" => Some(Value::Str(project_url("rustashop"))),
+            "rangularUrl" => Some(Value::Str(project_url("rangular"))),
+            "openTradingUrl" => Some(Value::Str(project_url("opentrading"))),
+            "interfireUrl" => Some(Value::Str(project_url("interfire"))),
+            "itcyUrl" => Some(Value::Str(project_url("itcy"))),
+            "ferrisSaying" => self
+                .ferris_saying
+                .as_ref()
+                .map(|signal| Value::Str(signal.get())),
             _ => None,
         }
     }
