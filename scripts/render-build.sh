@@ -29,3 +29,9 @@ for PAGE in serenade rustashop rangular opentrading interfire itcy; do
 
     echo "Prepared assets for $PAGE"
 done
+
+# Remove project pages from the main site's published output.
+# They remain available in their respective Render deployments.
+for PAGE in serenade rustashop rangular opentrading interfire itcy; do
+    rm -rf "$DIST/$PAGE"
+done
