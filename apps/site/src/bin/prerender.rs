@@ -19,25 +19,15 @@ fn main() -> anyhow::Result<()> {
         ("interfire", "interfire"),
         ("itcy", "itcy"),
     ] {
-        let content_marker = "<!--SERENADE_SSG_CONTENT-->";
-        if shell.matches(content_marker).count() != 1 {
-            bail!("Trunk output must contain exactly one {content_marker} marker");
-        }
-        let canonical_marker = "SERENADE_SSG_CANONICAL";
-        if shell.matches(canonical_marker).count() != 1 {
-            bail!("Trunk output must contain exactly one {canonical_marker} marker");
-        }
-        let mut html = shell.replacen(content_marker, &rust_contact_site::render_page(page), 1);
-        let (title, description, canonical) = page_metadata(page);
-        html = html.replacen(canonical_marker, canonical, 1);
-        html = html.replace(
-            "<title>Rust.Contact - Independent Rust projects from ITC</title>",
-            &format!("<title>{title}</title>"),
-        );
-        html = html.replace(
-            "content=\"Rust.Contact is the ITC portfolio for independent Rust products and open-source projects.\"",
-            &format!("content=\"{description}\""),
-        );
+        let (title, description) = page_metadata(page);
+        let canonical = match route {
+            "" => "https://rust.contact/".to_owned(),
+            "opentrading" => "https://open-trading.rust.contact/".to_owned(),
+            other => format!("https://{other}.rust.contact/"),
+        };
+        let head = rust_contact_site::render_seo_head(title, description, &canonical);
+        let content = rust_contact_site::render_page(page);
+        let html = render_shell(&shell, &head, &content)?;
 
         let output = if route.is_empty() {
             dist.join("index.html")
@@ -57,42 +47,71 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-fn page_metadata(page: &str) -> (&'static str, &'static str, &'static str) {
+fn render_shell(shell: &str, head: &str, content: &str) -> anyhow::Result<String> {
+    let head_marker = "<!--SERENADE_SSG_HEAD-->";
+    let content_marker = "<!--SERENADE_SSG_CONTENT-->";
+    if shell.matches(head_marker).count() != 1 || shell.matches(content_marker).count() != 1 {
+        bail!("Trunk output must contain exactly one head and content marker");
+    }
+    let (before_head, after_head) = shell
+        .split_once(head_marker)
+        .context("Trunk output is missing the SEO head marker")?;
+    let shell = format!("{before_head}{head}{after_head}");
+    let (before_content, after_content) = shell
+        .split_once(content_marker)
+        .context("Trunk output is missing the page content marker")?;
+    Ok(format!("{before_content}{content}{after_content}"))
+}
+
+fn page_metadata(page: &str) -> (&'static str, &'static str) {
     match page {
         "serenade" => (
             "Serenade - Rust framework by ITC",
             "Serenade is a modular application framework for Rust.",
-            "https://serenade.rust.contact/",
         ),
         "rustashop" => (
             "rustashop - ITC Rust project",
             "Explore rustashop, an independent Rust project from ITC.",
-            "https://rustashop.rust.contact/",
         ),
         "rangular" => (
             "rangular - ITC Rust project",
             "Explore rangular, Angular-shaped Leptos templates with automated component and SCSS builds.",
-            "https://rangular.rust.contact/",
         ),
         "opentrading" => (
             "OpenTrading - ITC Rust project",
             "Explore OpenTrading, a trading workstation built in Rust.",
-            "https://open-trading.rust.contact/",
         ),
         "interfire" => (
             "InterFire - ITC Rust project",
             "Explore InterFire, a Linux-first application firewall in Rust.",
-            "https://interfire.rust.contact/",
         ),
         "itcy" => (
             "ITCy - ITC Rust project",
             "Explore ITCy, an AI operator for Interchouette ITC.",
-            "https://itcy.rust.contact/",
         ),
         _ => (
             "Rust.Contact - Independent Rust projects from ITC",
-            "Rust.Contact is the ITC portfolio for independent Rust products and open-source projects.",
-            "https://rust.contact/",
+            "Independent Rust products, frameworks and open-source projects from Interchouette-ITC.",
         ),
+    }
+
+    #[cfg(test)]
+    mod tests {
+        #[test]
+        fn sitemap_lists_deployed_hosts() {
+            let sitemap = include_str!("../../sitemap.xml");
+            for host in [
+                "rust.contact",
+                "serenade.rust.contact",
+                "rustashop.rust.contact",
+                "rangular.rust.contact",
+                "open-trading.rust.contact",
+                "interfire.rust.contact",
+                "itcy.rust.contact",
+            ] {
+                assert!(sitemap.contains(&format!("<loc>https://{host}/</loc>")));
+            }
+            assert_eq!(sitemap.matches("<loc>").count(), 7);
+        }
     }
 }

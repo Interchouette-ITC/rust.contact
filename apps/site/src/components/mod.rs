@@ -8,6 +8,8 @@ pub mod portfolio_home;
 pub mod project_page;
 pub mod rangular_project;
 pub mod rustashop_project;
+#[cfg(feature = "ssr")]
+pub mod seo_head;
 pub mod serenade_project;
 pub mod site_footer;
 pub mod site_header;

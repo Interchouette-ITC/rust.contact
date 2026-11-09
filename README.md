@@ -5,6 +5,10 @@ portfolio homepage and project microsites as static HTML. The shared navigation
 template and styles are compiled with rangular; pages use Leptos and hydrate in
 the browser.
 
+The SEO head is a Rangular template with interpolated page metadata and ordinary
+Open Graph attributes. Its Rust module is SSR-only; browser hydration mounts the
+page body without compiling the SEO component.
+
 ## Requirements
 
 - Rust toolchain compatible with the Serenade workspace

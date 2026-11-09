@@ -50,6 +50,23 @@ pub fn render_page(page: &'static str) -> String {
     owner.with(|| view! { <SitePage page /> }.to_html())
 }
 
+#[cfg(feature = "ssr")]
+pub fn render_seo_head(title: &str, description: &str, canonical: &str) -> String {
+    let owner = Owner::new_root(Some(std::sync::Arc::new(
+        hydration_context::SsrSharedContext::new(),
+    )));
+    owner.with(|| {
+        view! {
+            <components::seo_head::SeoHead
+                title=title.to_owned()
+                description=description.to_owned()
+                canonical=canonical.to_owned()
+            />
+        }
+        .to_html()
+    })
+}
+
 #[cfg(any(feature = "hydrate", test))]
 fn page_for_path(path: &str, hostname: &str) -> &'static str {
     // Subdomain routing: {project}.rust.contact maps directly to its project page.
@@ -83,7 +100,37 @@ fn page_for_path(path: &str, hostname: &str) -> &'static str {
 
 #[cfg(all(test, feature = "ssr"))]
 mod tests {
-    use super::{page_for_path, render_page};
+    use super::{page_for_path, render_page, render_seo_head};
+
+    #[test]
+    fn seo_head_renders_template_attributes_and_escapes_values() {
+        let html = render_seo_head(
+            "Rust.Contact & \"Rust\" <projects>",
+            "Products & \"frameworks\"",
+            "https://rust.contact/serenade/",
+        );
+        for expected in [
+            "<title>Rust.Contact &amp; \"Rust\" &lt;projects&gt;</title>",
+            "property=\"og:title\"",
+            "property=\"og:description\"",
+            "property=\"og:url\"",
+            "content=\"Rust.Contact &amp; &quot;Rust&quot; &lt;projects&gt;\"",
+            "content=\"Products &amp; &quot;frameworks&quot;\"",
+            "href=\"https://rust.contact/serenade/\"",
+            "content=\"https://rust.contact/serenade/\"",
+            "content=\"https://rust.contact/rust.contact.png\"",
+            "name=\"twitter:card\" content=\"summary_large_image\"",
+            "type=\"application/ld+json\"",
+            "\"@context\":\"https://schema.org\"",
+        ] {
+            assert!(
+                html.contains(expected),
+                "missing SEO output: {expected}\n{html}"
+            );
+        }
+        assert_eq!(html.matches("<title>").count(), 1);
+        assert!(!html.contains("{{"));
+    }
 
     #[test]
     fn portfolio_routes_resolve() {
