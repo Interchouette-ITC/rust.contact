@@ -30,8 +30,9 @@ for PAGE in serenade rustashop rangular opentrading interfire itcy; do
     echo "Prepared assets for $PAGE"
 done
 
-# Remove project pages from the main site's published output.
-# They remain available in their respective Render deployments.
-for PAGE in serenade rustashop rangular opentrading interfire itcy; do
-    rm -rf "$DIST/$PAGE"
-done
+# Remove project pages only from the rust.contact Render deployment.
+if [[ "${RENDER_SERVICE_ID:-}" == "srv-dbla25jbc2fs73dlj0ng" ]]; then
+    for PAGE in serenade rustashop rangular opentrading interfire itcy; do
+        rm -rf "$DIST/$PAGE"
+    done
+fi
