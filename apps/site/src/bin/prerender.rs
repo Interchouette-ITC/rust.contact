@@ -94,24 +94,24 @@ fn page_metadata(page: &str) -> (&'static str, &'static str) {
             "Independent Rust products, frameworks and open-source projects from Interchouette-ITC.",
         ),
     }
+}
 
-    #[cfg(test)]
-    mod tests {
-        #[test]
-        fn sitemap_lists_deployed_hosts() {
-            let sitemap = include_str!("../../sitemap.xml");
-            for host in [
-                "rust.contact",
-                "serenade.rust.contact",
-                "rustashop.rust.contact",
-                "rangular.rust.contact",
-                "open-trading.rust.contact",
-                "interfire.rust.contact",
-                "itcy.rust.contact",
-            ] {
-                assert!(sitemap.contains(&format!("<loc>https://{host}/</loc>")));
-            }
-            assert_eq!(sitemap.matches("<loc>").count(), 7);
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn sitemap_lists_deployed_hosts() {
+        let sitemap = include_str!("../../sitemap.xml");
+        for host in [
+            "rust.contact",
+            "serenade.rust.contact",
+            "rustashop.rust.contact",
+            "rangular.rust.contact",
+            "open-trading.rust.contact",
+            "interfire.rust.contact",
+            "itcy.rust.contact",
+        ] {
+            assert!(sitemap.contains(&format!("<loc>https://{host}/</loc>")));
         }
+        assert_eq!(sitemap.matches("<loc>").count(), 7);
     }
 }
