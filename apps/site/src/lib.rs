@@ -91,7 +91,10 @@ mod tests {
         assert_eq!(page_for_path("/serenade/", "rust.contact"), "serenade");
         assert_eq!(page_for_path("/rustashop", "rust.contact"), "rustashop");
         assert_eq!(page_for_path("/rangular/", "rust.contact"), "rangular");
-        assert_eq!(page_for_path("/opentrading/", "rust.contact"), "opentrading");
+        assert_eq!(
+            page_for_path("/opentrading/", "rust.contact"),
+            "opentrading"
+        );
         assert_eq!(page_for_path("/interfire/", "rust.contact"), "interfire");
         assert_eq!(page_for_path("/itcy/", "rust.contact"), "itcy");
     }
@@ -128,12 +131,21 @@ mod tests {
         assert_eq!(page_for_path("/", "serenade.rust.contact"), "serenade");
         assert_eq!(page_for_path("/", "rustashop.rust.contact"), "rustashop");
         assert_eq!(page_for_path("/", "rangular.rust.contact"), "rangular");
-        assert_eq!(page_for_path("/", "open-trading.rust.contact"), "opentrading");
-        assert_eq!(page_for_path("/", "opentrading.rust.contact"), "opentrading");
+        assert_eq!(
+            page_for_path("/", "open-trading.rust.contact"),
+            "opentrading"
+        );
+        assert_eq!(
+            page_for_path("/", "opentrading.rust.contact"),
+            "opentrading"
+        );
         assert_eq!(page_for_path("/", "interfire.rust.contact"), "interfire");
         assert_eq!(page_for_path("/", "itcy.rust.contact"), "itcy");
         // subdomain takes precedence over conflicting path
-        assert_eq!(page_for_path("/rustashop", "serenade.rust.contact"), "serenade");
+        assert_eq!(
+            page_for_path("/rustashop", "serenade.rust.contact"),
+            "serenade"
+        );
     }
 
     #[test]
@@ -143,7 +155,10 @@ mod tests {
             ("serenade", "Modular by design. Rust-native."),
             ("rustashop", "Commerce, built in Rust."),
             ("rangular", "Angular-shaped templates for Leptos."),
-            ("opentrading", "Charting, signals, and AI-assisted workflows."),
+            (
+                "opentrading",
+                "Charting, signals, and AI-assisted workflows.",
+            ),
             ("interfire", "Linux-first application firewall in Rust."),
             ("itcy", "AI operator for Interchouette ITC."),
         ];
@@ -198,7 +213,14 @@ mod tests {
 
     #[test]
     fn project_pages_include_content_sections() {
-        let pages = ["serenade", "rustashop", "rangular", "opentrading", "interfire", "itcy"];
+        let pages = [
+            "serenade",
+            "rustashop",
+            "rangular",
+            "opentrading",
+            "interfire",
+            "itcy",
+        ];
         for page in pages {
             let html = render_page(page);
             assert!(
@@ -221,10 +243,7 @@ mod tests {
                 html.contains("TECHNOLOGY STACK"),
                 "missing TECHNOLOGY STACK section on {page}"
             );
-            assert!(
-                html.contains("tech-tag"),
-                "missing tech tags on {page}"
-            );
+            assert!(html.contains("tech-tag"), "missing tech tags on {page}");
         }
     }
 
@@ -270,7 +289,10 @@ mod tests {
             "name=\"_honey\"",
             "Send project brief",
         ] {
-            assert!(html.contains(expected), "missing {expected} in project form");
+            assert!(
+                html.contains(expected),
+                "missing {expected} in project form"
+            );
         }
     }
 }
