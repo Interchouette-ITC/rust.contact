@@ -1,11 +1,26 @@
 use leptos::prelude::*;
 
 mod components;
+#[cfg(feature = "ssr")]
+mod document;
 
 use components::{
     portfolio_home::PortfolioHome, project_page::ProjectPage, site_footer::SiteFooter,
     site_header::SiteHeader, site_layout::site_layout,
 };
+#[cfg(feature = "ssr")]
+pub use document::{PageMeta, render_document};
+
+/// Prerendered routes and the page each one renders.
+pub const ROUTES: [(&str, &str); 7] = [
+    ("/", "home"),
+    ("/serenade/", "serenade"),
+    ("/rustashop/", "rustashop"),
+    ("/rangular/", "rangular"),
+    ("/opentrading/", "opentrading"),
+    ("/interfire/", "interfire"),
+    ("/itcy/", "itcy"),
+];
 
 #[cfg(feature = "hydrate")]
 #[component]
@@ -42,31 +57,6 @@ fn SitePage(page: &'static str) -> impl IntoView {
     )
 }
 
-#[cfg(feature = "ssr")]
-pub fn render_page(page: &'static str) -> String {
-    let owner = Owner::new_root(Some(std::sync::Arc::new(
-        hydration_context::SsrSharedContext::new(),
-    )));
-    owner.with(|| view! { <SitePage page /> }.to_html())
-}
-
-#[cfg(feature = "ssr")]
-pub fn render_seo_head(title: &str, description: &str, canonical: &str) -> String {
-    let owner = Owner::new_root(Some(std::sync::Arc::new(
-        hydration_context::SsrSharedContext::new(),
-    )));
-    owner.with(|| {
-        view! {
-            <components::seo_head::SeoHead
-                title=title.to_owned()
-                description=description.to_owned()
-                canonical=canonical.to_owned()
-            />
-        }
-        .to_html()
-    })
-}
-
 #[cfg(any(feature = "hydrate", test))]
 fn page_for_path(path: &str, hostname: &str) -> &'static str {
     // Subdomain routing: {project}.rust.contact maps directly to its project page.
@@ -100,7 +90,74 @@ fn page_for_path(path: &str, hostname: &str) -> &'static str {
 
 #[cfg(all(test, feature = "ssr"))]
 mod tests {
-    use super::{page_for_path, render_page, render_seo_head};
+    use super::{PageMeta, ROUTES, page_for_path, render_document};
+    use serenade_view::DocumentAssets;
+    use std::sync::Once;
+
+    fn render(page: &'static str, meta: PageMeta, assets: &DocumentAssets) -> String {
+        static INITIALIZE: Once = Once::new();
+        INITIALIZE.call_once(|| {
+            serenade_view::initialize_leptos_ssr().expect("initialize SSR executor");
+        });
+        render_document(page, meta, assets)
+            .expect("render page document")
+            .into_static_output()
+    }
+
+    fn meta(title: &str, description: &str, canonical: &str) -> PageMeta {
+        PageMeta {
+            title: title.to_owned(),
+            description: description.to_owned(),
+            canonical: canonical.to_owned(),
+        }
+    }
+
+    pub(super) fn render_page(page: &'static str) -> String {
+        let html = render(
+            page,
+            meta("Title", "Description", "https://rust.contact/"),
+            &DocumentAssets::default(),
+        );
+        let start = html.find("<body>").expect("document body");
+        html[start..].to_owned()
+    }
+
+    fn render_seo_head(title: &str, description: &str, canonical: &str) -> String {
+        let html = render(
+            "home",
+            meta(title, description, canonical),
+            &DocumentAssets::default(),
+        );
+        let start = html.find("<head>").expect("document head");
+        let end = html.find("</head>").expect("document head end");
+        html[start..end].to_owned()
+    }
+
+    #[test]
+    fn documents_combine_template_head_page_body_and_trunk_assets_once() {
+        let assets = DocumentAssets::new(
+            "<link rel=\"stylesheet\" href=\"/rangular-1a2b.css\"><script type=\"module\">import init from '/rust-contact-site-3c4d.js';</script>",
+            "",
+        );
+        for (route, page) in ROUTES {
+            let canonical = format!("https://rust.contact{route}");
+            let html = render(page, meta("Title", "Description", &canonical), &assets);
+            assert!(
+                html.starts_with("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\">"),
+                "unexpected document start on {route}"
+            );
+            assert!(html.contains("name=\"theme-color\""));
+            assert!(html.contains("href=\"/icon.ico\""));
+            assert!(html.contains(&format!("<link rel=\"canonical\" href=\"{canonical}\">")));
+            assert_eq!(html.matches("/rangular-1a2b.css").count(), 1);
+            assert_eq!(html.matches("/rust-contact-site-3c4d.js").count(), 1);
+            let head_end = html.find("</head>").expect("document head end");
+            assert!(html.find("/rust-contact-site-3c4d.js").expect("loader") < head_end);
+            assert!(html.contains("class=\"site-shell"));
+            assert!(!html.contains("SERENADE_SSG"));
+            assert!(!html.contains("<ng-content"));
+        }
+    }
 
     #[test]
     fn seo_head_renders_template_attributes_and_escapes_values() {
@@ -347,7 +404,7 @@ mod tests {
 #[cfg(all(test, feature = "ssr"))]
 #[test]
 fn debug_home_html() {
-    let html = render_page("home");
+    let html = tests::render_page("home");
     // Check if project cards are present
     if let Some(pos) = html.find("Serenade") {
         eprintln!("Found 'Serenade' at position {}", pos);

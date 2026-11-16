@@ -1,11 +1,18 @@
 
 SITE_BASE_URL ?= https://rust.contact
+SERENADE_REPOSITORY ?= https://github.com/Interchouette-ITC/serenade.git
+SERENADE_SSG ?= serenade-ssg
 
-.PHONY: build test preview clean
+.PHONY: build tools test preview clean
 
+# Build the hydration bundle with Serenade's pinned Trunk, then prerender every
+# route into complete documents carrying Trunk's generated assets.
 build:
-	cd apps/site && SITE_BASE_URL="$(SITE_BASE_URL)" trunk build --release --locked --features hydrate
-	SITE_BASE_URL="$(SITE_BASE_URL)" cargo run --locked --release --manifest-path apps/site/Cargo.toml --no-default-features --features ssr --bin prerender
+	SITE_BASE_URL="$(SITE_BASE_URL)" $(SERENADE_SSG) --release --app-dir apps/site
+
+# Install the Serenade SSG command.
+tools:
+	cargo install --locked --git $(SERENADE_REPOSITORY) --branch dev serenade-cli --bin serenade-ssg
 
 test:
 	cargo test --locked --manifest-path apps/site/Cargo.toml --no-default-features --features ssr

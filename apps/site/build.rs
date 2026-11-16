@@ -4,6 +4,8 @@ fn main() {
 
     rangular_build::build(
         rangular_build::Config::new("src/components", "style/rangular.generated.css")
-            .global_scss("style/site.scss"),
+            .global_scss("style/site.scss")
+            .document("src/document/document.html")
+            .head("src/document/head.html"),
     );
 }
