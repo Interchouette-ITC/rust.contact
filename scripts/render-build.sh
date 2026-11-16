@@ -4,9 +4,19 @@ set -euo pipefail
 
 rustup target add wasm32-unknown-unknown
 
-# serenade-ssg installs and runs Serenade's pinned Trunk release.
-make tools
-export PATH="$HOME/.cargo/bin:$PATH"
+# Download prebuilt serenade-ssg and Serenade's pinned Trunk from the rolling
+# serenade-cli-dev pre-release; fall back to compiling them if unavailable.
+RELEASE="https://github.com/Interchouette-ITC/Serenade/releases/download/serenade-cli-dev"
+TARGET_TRIPLE="x86_64-unknown-linux-musl"
+mkdir -p "$HOME/.local/bin" "$HOME/.serenade/tools"
+if curl -fsSL "$RELEASE/serenade-cli-$TARGET_TRIPLE.tar.gz" | tar -xz -C "$HOME/.local/bin" \
+    && curl -fsSL "$RELEASE/serenade-trunk-$TARGET_TRIPLE.tar.gz" | tar -xz -C "$HOME/.serenade/tools"; then
+    echo "Using prebuilt serenade-cli-dev binaries"
+else
+    echo "Prebuilt binaries unavailable; compiling serenade-ssg"
+    make tools
+fi
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
 make build
 
