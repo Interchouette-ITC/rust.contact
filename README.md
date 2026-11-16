@@ -1,4 +1,4 @@
-# Rust.Contact
+# rust.contact
 
 The ITC portfolio for Rust projects. A single Serenade SSG build produces the
 portfolio homepage and project microsites as static HTML. The shared navigation
