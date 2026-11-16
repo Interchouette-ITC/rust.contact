@@ -5,7 +5,7 @@ SERENADE_SSG ?= serenade-ssg
 
 .PHONY: build tools test preview clean
 
-# Build the hydration bundle with Serenade's pinned Trunk, then prerender every
+# Build the hydration bundle with Serenade's managed Trunk, then prerender every
 # route into complete documents carrying Trunk's generated assets.
 build:
 	SITE_BASE_URL="$(SITE_BASE_URL)" $(SERENADE_SSG) --release --app-dir apps/site

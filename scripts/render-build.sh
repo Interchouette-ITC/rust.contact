@@ -1,16 +1,22 @@
-
 #!/usr/bin/env bash
 set -euo pipefail
 
 rustup target add wasm32-unknown-unknown
 
-# Download prebuilt serenade-ssg and Serenade's pinned Trunk from the rolling
-# serenade-cli-dev pre-release; fall back to compiling them if unavailable.
+# Download the prebuilt, checksum-verified serenade-ssg from the rolling
+# serenade-cli-dev pre-release; fall back to compiling it if unavailable.
+# Trunk is not installed here: serenade-ssg downloads and verifies Serenade's
+# managed Trunk (fork release trunk-itc-dev) on its first build.
 RELEASE="https://github.com/Interchouette-ITC/Serenade/releases/download/serenade-cli-dev"
 TARGET_TRIPLE="x86_64-unknown-linux-musl"
-mkdir -p "$HOME/.local/bin" "$HOME/.serenade/tools"
-if curl -fsSL "$RELEASE/serenade-cli-$TARGET_TRIPLE.tar.gz" | tar -xz -C "$HOME/.local/bin" \
-    && curl -fsSL "$RELEASE/serenade-trunk-$TARGET_TRIPLE.tar.gz" | tar -xz -C "$HOME/.serenade/tools"; then
+ARCHIVE="serenade-cli-$TARGET_TRIPLE.tar.gz"
+DOWNLOAD_DIR="$(mktemp -d)"
+trap 'rm -rf "$DOWNLOAD_DIR"' EXIT
+mkdir -p "$HOME/.local/bin"
+if curl -fsSL --retry 3 -o "$DOWNLOAD_DIR/$ARCHIVE" "$RELEASE/$ARCHIVE" \
+    && curl -fsSL --retry 3 -o "$DOWNLOAD_DIR/$ARCHIVE.sha256" "$RELEASE/$ARCHIVE.sha256" \
+    && (cd "$DOWNLOAD_DIR" && sha256sum -c "$ARCHIVE.sha256") \
+    && tar -xzf "$DOWNLOAD_DIR/$ARCHIVE" -C "$HOME/.local/bin"; then
     echo "Using prebuilt serenade-cli-dev binaries"
 else
     echo "Prebuilt binaries unavailable; compiling serenade-ssg"
