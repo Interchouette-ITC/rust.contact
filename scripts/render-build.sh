@@ -2,14 +2,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-mkdir -p "$HOME/.local/bin"
-
-curl -fsSL https://github.com/trunk-rs/trunk/releases/latest/download/trunk-x86_64-unknown-linux-gnu.tar.gz \
-  | tar -xz -C "$HOME/.local/bin"
-
-export PATH="$HOME/.local/bin:$PATH"
-
 rustup target add wasm32-unknown-unknown
+
+# serenade-ssg installs and runs Serenade's pinned Trunk release.
+make tools
+export PATH="$HOME/.cargo/bin:$PATH"
 
 make build
 

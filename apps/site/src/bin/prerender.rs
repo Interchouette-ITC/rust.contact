@@ -1,66 +1,43 @@
-use std::fs;
-use std::path::PathBuf;
-
 use anyhow::{Context, bail};
+use rust_contact_site::PageMeta;
+use serenade_view::{StaticDocumentWriter, TrunkAssetManifest, initialize_leptos_ssr};
 
 fn main() -> anyhow::Result<()> {
-    let app = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    let dist = app.join("dist");
-    let shell_path = dist.join("index.html");
-    let shell = fs::read_to_string(&shell_path)
-        .with_context(|| format!("read Trunk output {}", shell_path.display()))?;
+    initialize_leptos_ssr()?;
+    let manifest = TrunkAssetManifest::read_from_env()?;
+    let [bundle] = manifest.wasm.as_slice() else {
+        bail!("the site needs exactly one Trunk WASM bundle to hydrate");
+    };
+    if bundle.app_type != "main" || !bundle.inject_scripts {
+        bail!("the site requires one main Trunk WASM bundle with script injection for hydration");
+    }
+    let assets = manifest
+        .document_assets()
+        .context("read Trunk's generated document assets")?;
+    let writer = StaticDocumentWriter::from_env()?;
 
-    for (route, page) in [
-        ("", "home"),
-        ("serenade", "serenade"),
-        ("rustashop", "rustashop"),
-        ("rangular", "rangular"),
-        ("opentrading", "opentrading"),
-        ("interfire", "interfire"),
-        ("itcy", "itcy"),
-    ] {
+    for (route, page) in rust_contact_site::ROUTES {
         let (title, description) = page_metadata(page);
-        let canonical = match route {
-            "" => "https://rust.contact/".to_owned(),
-            "opentrading" => "https://open-trading.rust.contact/".to_owned(),
-            other => format!("https://{other}.rust.contact/"),
+        let meta = PageMeta {
+            title: title.to_owned(),
+            description: description.to_owned(),
+            canonical: canonical_url(page),
         };
-        let head = rust_contact_site::render_seo_head(title, description, &canonical);
-        let content = rust_contact_site::render_page(page);
-        let html = render_shell(&shell, &head, &content)?;
-
-        let output = if route.is_empty() {
-            dist.join("index.html")
-        } else {
-            let directory = dist.join(route);
-            fs::create_dir_all(&directory)
-                .with_context(|| format!("create route directory {}", directory.display()))?;
-            directory.join("index.html")
-        };
-        let html = serenade_minify::minify_html(&html)
-            .with_context(|| format!("minify prerendered page {}", output.display()))?;
-        fs::write(&output, html)
-            .with_context(|| format!("write prerendered page {}", output.display()))?;
-        println!("Prerendered /{route} to {}", output.display());
+        let document = rust_contact_site::render_document(page, meta, &assets)
+            .with_context(|| format!("render {route}"))?;
+        let output = writer.write(route, document)?;
+        println!("Prerendered {route} to {}", output.display());
     }
 
     Ok(())
 }
 
-fn render_shell(shell: &str, head: &str, content: &str) -> anyhow::Result<String> {
-    let head_marker = "<!--SERENADE_SSG_HEAD-->";
-    let content_marker = "<!--SERENADE_SSG_CONTENT-->";
-    if shell.matches(head_marker).count() != 1 || shell.matches(content_marker).count() != 1 {
-        bail!("Trunk output must contain exactly one head and content marker");
+fn canonical_url(page: &str) -> String {
+    match page {
+        "home" => "https://rust.contact/".to_owned(),
+        "opentrading" => "https://open-trading.rust.contact/".to_owned(),
+        other => format!("https://{other}.rust.contact/"),
     }
-    let (before_head, after_head) = shell
-        .split_once(head_marker)
-        .context("Trunk output is missing the SEO head marker")?;
-    let shell = format!("{before_head}{head}{after_head}");
-    let (before_content, after_content) = shell
-        .split_once(content_marker)
-        .context("Trunk output is missing the page content marker")?;
-    Ok(format!("{before_content}{content}{after_content}"))
 }
 
 fn page_metadata(page: &str) -> (&'static str, &'static str) {

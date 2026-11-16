@@ -13,17 +13,25 @@ page body without compiling the SEO component.
 
 - Rust toolchain compatible with the Serenade workspace
 - `wasm32-unknown-unknown` Rust target
-- Trunk
+- `serenade-ssg` (`make tools`), which installs Serenade's pinned Trunk release
 
 ## Build and preview
 
 ```sh
 rustup target add wasm32-unknown-unknown
-cargo install trunk
+make tools
 make test
 make build
 make preview
 ```
+
+`make build` runs `serenade-ssg --release --app-dir apps/site`. Trunk builds the
+hydration bundle and writes its asset manifest; the `prerender` binary then
+renders each route as a complete Serenade document from the rangular document
+and head templates, with Trunk's hashed stylesheet and WASM loader markup taken
+from the manifest. Prerendering fails unless the manifest has exactly one main
+WASM bundle whose generated loader is present, so a page cannot ship without
+hydration. `serenade-ssg` minifies the written HTML.
 
 The static output is `apps/site/dist/`. The preview is available at
 `http://127.0.0.1:4174/`.
