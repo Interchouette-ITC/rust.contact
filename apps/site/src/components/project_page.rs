@@ -1,6 +1,6 @@
 use leptos::prelude::*;
-use rangular_aot::HostCell;
-use rangular_host::{Host, HostError, Value};
+use rangular::aot::HostCell;
+use rangular::host::{Host, HostError, Value};
 
 use super::{
     SiteHost, interfire_project, itcy_project, opentrading_project, rangular_project,

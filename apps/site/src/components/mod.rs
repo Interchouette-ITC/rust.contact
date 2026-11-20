@@ -1,5 +1,5 @@
 use leptos::reactive::{signal::RwSignal, traits::Get};
-use rangular_host::{Host, HostError, Value};
+use rangular::host::{Host, HostError, Value};
 
 pub mod interfire_project;
 pub mod itcy_project;
