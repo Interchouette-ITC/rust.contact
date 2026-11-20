@@ -13,7 +13,9 @@ page body without compiling the SEO component.
 
 - Rust toolchain compatible with the Serenade workspace
 - `wasm32-unknown-unknown` Rust target
-- `serenade-ssg` (`make tools`), which installs Serenade's pinned Trunk release
+- `serenade-ssg` (`make tools`), which installs Serenade's pinned Trunk release.
+  The Render build (`scripts/render-build.sh`) installs prebuilt binaries from the latest
+  Serenade release, or from the rolling pre-release with `SERENADE_CLI_CHANNEL=pre-release`
 
 ## Build and preview
 

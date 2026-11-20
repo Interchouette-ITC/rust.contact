@@ -1,6 +1,5 @@
 
 SITE_BASE_URL ?= https://rust.contact
-SERENADE_REPOSITORY ?= https://github.com/Interchouette-ITC/serenade.git
 SERENADE_SSG ?= serenade-ssg
 
 .PHONY: build tools test preview clean
@@ -10,9 +9,9 @@ SERENADE_SSG ?= serenade-ssg
 build:
 	SITE_BASE_URL="$(SITE_BASE_URL)" $(SERENADE_SSG) --release --app-dir apps/site
 
-# Install the Serenade SSG command.
+# Install the Serenade SSG command from crates.io.
 tools:
-	cargo install --locked --git $(SERENADE_REPOSITORY) --branch dev serenade-cli --bin serenade-ssg
+	cargo install --locked serenade-cli --bin serenade-ssg
 
 test:
 	cargo test --locked --manifest-path apps/site/Cargo.toml --no-default-features --features ssr
